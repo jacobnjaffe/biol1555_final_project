@@ -1,38 +1,40 @@
+#!/usr/bin/julia
 
 using DataFrames
+using TextAnalysis
+
 table = readtable("testfile.txt", separator = '\t')
 
 text = table[:text]
 
-using TextAnalysis 
-n_gram_document = NGramDocument("testfile.txt")
-
-
-sd = StringDocument("testfile.txt")
-
-n_gram_document.tokens
-
-sample = "this is some sample text"
-
-
-sample = split(sample, r"\s+")
-  
-tokens = Dict()
-  
-  for m in 1
-    for index in 1:(length(words) - m + 1)
-      token = join(words[index:(index + m - 1)], " ")
-      if has(tokens, token)
-        tokens[token] = tokens[token] + 1
-      else
-        tokens[token] = 1
-      end
-    end
-  end
-  
-  tokens
+# Create big string to then look at each tweet
+string = ""
+space = " "
+for i in text   
+    string = string * i 
+    string = string * space
 end
 
 
+# Cleaning data
+sd = StringDocument(string)
+remove_case!(sd)
+remove_punctuation!(sd)
+remove_indefinite_articles!(sd)
+remove_definite_articles!(sd)
+remove_prepositions!(sd)
+remove_pronouns!(sd)
 
 
+# making unigrams
+n = ngrams(sd)
+n_sorted = sort(collect(n), by = tuple -> last(tuple), rev=true)[1:20] #get first 20 entries
+@show n_sorted
+
+
+# make bigrams (i dont think this works lolz) 
+n = ngrams(sd,2)
+n_sorted_2 = sort(collect(n), by = tuple -> last(tuple), rev=true)[1:20] #get first 20 entries
+@show n_sorted_2
+
+# make a corpus
