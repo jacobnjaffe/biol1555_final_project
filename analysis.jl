@@ -22,24 +22,6 @@ function cleaning(tweets)
   return clean_tweets
 end
 
-
-"""
-Creates set of unique tweets (no repeats / retweets)
-
-Input: list of tweets (can be either clean or unclean)
-Output: set of tweets
-"""
-function unique(tweets)
-  unique_tweets = Set()
-  for tweet in tweets
-    if in(tweet, unique_tweets) == false
-      push!(unique_tweets, tweet)
-    end
-  end
-  return unique_tweets
-end
-
-
 """
 Calculates unigram frequencies
 Step1: creates single string of text from set of tweets (no repeats)
@@ -318,14 +300,14 @@ function main()
   println("There are ", length(unique(text)), " unique tweets.")
 
   """Prints most common unigrams"""
-  unigrams = unigram_freq(unique(df[:clean_text]))
+  unigrams = unigram_freq(Set(df[:clean_text]))
   top_unigrams = unigrams[1:20] #top 20
   for unigram in top_unigrams
     println(unigram)
   end
 
   """Prints most common unigrams, bigrams, and trigrams"""
-  top_ngrams = ngram_freq(unique(df[:clean_text]), 3)[1:40]
+  top_ngrams = ngram_freq(Set(df[:clean_text]), 3)[1:40]
   for ngram in top_ngrams
     println(ngram)
   end
